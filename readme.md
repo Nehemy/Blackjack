@@ -24,15 +24,11 @@ Welcome to the **Blackjack Game**! This Python script is a simple console-based 
 
 ## Requirements
 - Python 3.x
-- `art` module (for displaying the game logo)
-
-To install the `art` module, run:
-```bash
-pip install art
-```
+- `art.py` file: This file is included in the repository and contains the game’s logo for display purposes.
 
 ## How to Run
-Run the game in your terminal:
-```bash
-python blackjack_game.py
-```
+1. Clone or download this repository.
+2. Open a terminal in the directory containing the files.
+3. Run the game:
+   ```bash
+   python blackjack_game.py
