@@ -1,105 +1,78 @@
 import art
 import random
 
-def game():
+def deal_card():
     cards = [11, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10]
+    random_card = random.choice(cards)
+    return random_card
 
-    currentcards = {
-        "playercards": [],
-        "dealercards": [],
-    }
+def sum_scores(card_numbers):
+    card_sum = sum(card_numbers)
+    if card_sum == 21 and 11 in card_numbers and len(card_numbers) == 2:
+        return 0
+    if card_sum > 21 and 11 in card_numbers:
+        card_numbers.remove(11)
+        card_numbers.append(1)
 
-    currentcards["playercards"] = [random.choice(cards), random.choice(cards)]
-    currentcards["dealercards"] = [random.choice(cards)]
+    return card_sum
 
-    player_total = sum(currentcards["playercards"])
-    dealer_total = sum(currentcards["dealercards"])
+def compare(user_total, dealer_total):
+    if user_total == dealer_total:
+        return "It is a draw"
+    elif dealer_total == 0:
+        return "You Lose, opponent has Blackjack"
+    elif user_total == 0:
+        return "You Win with a Blackjack"
+    elif user_total > 21:
+        return "You went over. You lose"
+    elif dealer_total > 21:
+        return "Your opponent went over, You Win!"
+    elif user_total > dealer_total:
+        return "You win"
+    else:
+        return "You lose"
 
-    currentcards_player = currentcards["playercards"]
-    currentcards_dealer = currentcards["dealercards"]
+
+
+def play():
     print(art.logo)
-    print(f"Your cards: {currentcards_player}, current score: {player_total}")
-    print(f"Computer's first card: {currentcards_dealer}")
+    user_cards = []
+    dealer_cards = []
+    dealer_cards_total = -1
+    user_cards_total = -1
+
+
+    for _ in range(2):
+        user_cards.append(deal_card())
+        dealer_cards.append(deal_card())
 
     game_on = True
     while game_on:
 
-        choice = input("Type 'y' to get another card, type 'n' to pass: ").lower()
-    #  if player says yes
-        if choice == "y":
-        # select another random number and add to the player list
-            currentcards["playercards"].append(random.choice(cards))
-            player_total = sum(currentcards["playercards"])
-            print(f"Your cards: {currentcards_player}, current score: {player_total}")
-            print(f"Computer's first card: {currentcards_dealer}")
-        # calculate if the totals is greater than 21 if not still give a chance to ask the user to hold or pick another card
-        # if player goes over 21 dealer wins instantly
+        user_cards_total = sum_scores(user_cards)
+        dealer_cards_total = sum_scores(dealer_cards)
 
-            if player_total > 21 and 11 in currentcards["playercards"]:
-                currentcards["playercards"].remove(11)
-                currentcards["playercards"].append(1)
-                player_total = sum(currentcards["playercards"])
+        print(f"Your cards: {user_cards}, current score: {user_cards_total}")
+        print(f"Computer's first card: {dealer_cards[0]}")
 
-
-            if player_total > 21:
-                print(f"Your final hand: {currentcards_player}, final score: {player_total}")
-                print(f"Computer's final hand: {currentcards_dealer}, final score: {dealer_total}")
-                print("You went over. You lose 😭")
-                game_on = False
-
+        if user_cards_total == 0 or dealer_cards_total == 0 or user_cards_total > 21:
+            game_on = False
         else:
-            currentcards["dealercards"].append(random.choice(cards))
-            dealer_total = sum(currentcards["dealercards"])
-            player_total = sum(currentcards["playercards"])
-
-            if dealer_total > 21 and 11 in currentcards["dealercards"]:
-                currentcards["dealercards"].remove(11)
-                currentcards["dealercards"].append(1)
-                dealer_total = sum(currentcards["dealercards"])
-
-            while dealer_total < 17:
-                currentcards["dealercards"].append(random.choice(cards))
-                dealer_total = sum(currentcards["dealercards"])
-                if dealer_total > 21 and 11 in currentcards["dealercards"]:
-                    currentcards["dealercards"].remove(11)
-                    currentcards["dealercards"].append(1)
-                    dealer_total = sum(currentcards["dealercards"])
-
-            if player_total and dealer_total == 21:
-                print("It is a draw")
-                game_on = False
-
-            if dealer_total > 21:
-                print(f"Your final hand: {currentcards_player}, final score: {player_total}")
-                print(f"Computer's final hand: {currentcards_dealer}, final score: {dealer_total}")
-                print("Your opponent went over, You Win!")
-                game_on = False
-
+            choice = input("Type 'y' to get another card, type 'n' to pass: ").lower()
+            if choice == "y":
+                user_cards.append(deal_card())
             else:
+                game_on = False
 
+        while dealer_cards_total != 0 and dealer_cards_total < 17:
+            dealer_cards.append(deal_card())
+            dealer_cards_total = sum_scores(dealer_cards)
 
-                if player_total > dealer_total:
-                    print(f"Your final hand: {currentcards_player}, final score: {player_total}")
-                    print(f"Computer's final hand: {currentcards_dealer}, final score: {dealer_total}")
-                    print("You Win!")
-                    game_on = False
-                else:
-                    print(f"Your final hand: {currentcards_player}, final score: {player_total}")
-                    print(f"Computer's final hand: {currentcards_dealer}, final score: {dealer_total}")
-                    print("You lose, Dealer Wins")
-                    game_on = False
+    print(f"Your final hand: {user_cards}, final score: {user_cards_total}")
+    print(f"Computer's final hand: {dealer_cards}, final score: {dealer_cards_total}")
+    print(compare(user_cards_total, dealer_cards_total))
 
-
-# if hold (no) pick a card for the dealer randomly and add the total >> if the total is less than 17  >> add another random card to dealer card list then calculate total >> if dealer card total >= 17  then you can now compare the total of dealer and player, and the highest close of both wins >> if both are equal to 21, it is a draw.
-
-
-play_game = True
-
-while play_game:
-    want_to_play = input("Do you want to play a game of Blackjack? Type 'y' or 'n': ").lower()
-    if want_to_play == "y":
-        game()
-    else:
-        play_game = False
-
+while input("Do you want to play a game of Blackjack? Type 'y' or 'n': ").lower() == "y":
+    print("\n" * 20)
+    play()
 
